@@ -130,7 +130,7 @@ email <example@example.com>
 
 效果：
 
-Email 链接： <example@example.com>
+email <example@example.com>
 [Github](http://github.com)
 自动生成链接： <http://www.github.com/> 
 
@@ -234,10 +234,8 @@ op2=>operation: 登出
 cond=>condition: 是否登录？
 
 st->cond
-cond(yes)->e
-cond(no)->st2
-e->op2->cond
-st2->op1->cond
+cond(yes)->e->op2(right)->cond
+cond(no)->st2->op1(right)->cond
 ```
 
 更多请参考：<http://bramp.github.io/js-sequence-diagrams/>, <http://adrai.github.io/flowchart.js/>
@@ -327,7 +325,7 @@ $$	x = \dfrac{-b \pm \sqrt{b^2 - 4ac}}{2a} $$
 语法：
 
 ```
-这是一个脚注：[^sample_footnote]
+这是一个脚注：[^footnotename]
 ```
 
 效果：
