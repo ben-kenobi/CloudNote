@@ -27,6 +27,11 @@ amnualFlow=>operation: 手动设置流程
 scheduleFlow=>operation: Schedule设置
                          流程并等待结果
                 >>在schedule流程
+updateSectorGeo=>operation: 更新当前
+                            sector
+                            地理围栏设置
+                    >>Geofence
+
 
 [//]: <> (条件)
 isAutoMode=>condition: 判断是否是切
@@ -41,7 +46,7 @@ st->getCam->hasDevice(yes)->isAutoMode
 hasDevice(no)->updateToServer
 isAutoMode(no)->amnualFlow->isAllFail
 isAutoMode(yes)->isScheduleMode
-isScheduleMode(no)->updateToServer->ed
+isScheduleMode(no)->updateSectorGeo->isAllFail
 isScheduleMode(yes)->scheduleFlow->isAllFail
 isAllFail(yes)->allfaillOp->ed
 isAllFail(no,bottom)->updateToServer->ed
@@ -106,8 +111,72 @@ hasScheduleID(no)->creaeScheduleID->loopCam
 ****
 
 ****
+#添加Geofence监听流程
+```flow
+st=>start: 设置位置
+ed=>end: 更新界面
 
 
+savetolocal=>operation: 以当前sectorId作ID
+                        保存设置的位置信息
+monitorRegion=>operation: 让locationManager
+                            监视设置的位置
+
+waitforRegionEvent=>operation: 回调函数中等待
+                            地理位置变化事件
+
+getEvent=>operation: 收到位置变化事件
+updateRegionStatus=>operation: 更新当前变化的位置状态
+getSectorById=>operation: 根据变化位置ID获取sector
+notiOrAlert=>operation: 弹出提示或通知有变化
+updateSectorGeo=>operation: 更新当前sector地理围栏设置
+                    >>设置Geofence流程
+                    
+isGeoEnable=>condition: 当前sector是否
+                        启用地理围栏
+
+
+st->savetolocal->monitorRegion->waitforRegionEvent->getEvent->updateRegionStatus->isGeoEnable(yes)->getSectorById->notiOrAlert->updateSectorGeo->ed
+isGeoEnable(no)->ed
+```
+****
+
+****
+
+#设置GeoFence流程
+```flow
+st=>start: geoFence设置开始
+ed=>end: geoFence设置结束
+
+
+calLocationContain=>operation: 计算当前地理位置是
+                否在配置的区域位置内
+                得到当前要设置的场景
+defScene=>operation: 默认为Away场景
+
+loopCam=>operation: 循环所有设备
+
+getSceneToAction=>operation: 根据场景计算在每个设备
+                中对应的action配置
+                                
+SetPirAction=>operation: 对每个设备设置
+                        PIRAtion，
+                        记录成功失败
+                        
+piractionRetOp=>operation: 成功的则更
+                            新本地数据，
+                            失败的记录条数
+
+hasLocation=>condition: 当前sector是否
+                        有设置位置
+
+
+st->hasLocation(yes)->calLocationContain->loopCam->getSceneToAction->SetPirAction->piractionRetOp->ed
+hasLocation(no)->defScene->loopCam
+```
+****
+
+****
 
 #更新sector流程
 ```flow
@@ -127,13 +196,16 @@ amnualFlow=>operation: 手动设置流程
 scheduleFlow=>operation: Schedule设置
                          流程并等待结果
                 >>在schedule流程
-
+updateSectorGeo=>operation: 更新当前
+                            sector
+                            地理围栏设置
+                    >>Geofence
 [//]: <> (条件)
 isAutoMode=>condition: 判断是否是Auto状态
 isScheduleMode=>condition: 判断是否是Schedule状态
 
 st->getFailCam->isAutoMode(no)->amnualFlow->ed
-isAutoMode(yes)->isScheduleMode(no)->ed
+isAutoMode(yes)->isScheduleMode(no)->updateSectorGeo->ed
 isScheduleMode(yes)->scheduleFlow->ed
 ```
 ****
