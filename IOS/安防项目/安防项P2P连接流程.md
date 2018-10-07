@@ -59,3 +59,20 @@ isBaseOnline(no)->log->ed
 ```
 ****
 
+
+
+
+#设置指令
+```sequence
+App->BS: 建立连接
+BS-->App: 返回结果
+App->BS: 发送指令
+BS->Cam: 设置给Cam
+Cam-->BS: 返回结果
+BS->Server: 状态同步到后台
+Server-->BS: 返回结果
+BS-->App: 返回指令结果
+Note left of App: 更新本地数据并刷新界面
+```
+
+
