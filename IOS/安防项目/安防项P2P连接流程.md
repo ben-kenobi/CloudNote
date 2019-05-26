@@ -1,13 +1,12 @@
-#连接流程
+#p2p下发指令流程
 
 ****
 ```flow
 st=>start: 发送操作指令
 ed=>end: 回调操作结果
 
-connect=>operation: 进行连接
-                    >>执行连接
-exeCmd=>operation: 执行操作指令
+connect=>operation: <<执行连接>>
+exeCmd=>operation: 执行发送操作指令
 disconnect=>operation: 断开连接
 log=>operation: 记录结果
 operRes=>operation: 返回操作结果
@@ -29,7 +28,7 @@ needReconnect(no)->log->ed
 ****
 
 
-#执行连接
+#执行连接流程
 
 ****
 ```flow
@@ -37,6 +36,7 @@ st=>start: 开始连接
 ed=>end: 返回结果
 
 getAppConn=>operation: 获取初始化串
+
 init=>operation: 初始化
 connect=>operation: 连接
 log=>operation: 记录结果
